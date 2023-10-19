@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+	<AddIn Type="Application">
+		<Name>INGP CheckBasePoint</Name>
+		<Assembly>CheckBasePoint.dll</Assembly>
+		<ClientId>F35D98A6-0D15-4D9F-8811-5A00EAE1910A</ClientId>
+		<FullClassName>CheckBasePoint.ExternalApplication</FullClassName>
+		<VendorId>INGP</VendorId>
+		<VendorDescription>millermn@engline.ru</VendorDescription>
+	</AddIn>
+	<!-- <AddIn Type="Command"> -->
+	<!-- <Assembly>C:\Users\151\Google Диск\00_Программирование\C#\06_Проекты\00_Revit\02_INGP_App\INGP\INGP\bin\Debug\INGP.dll</Assembly> -->
+	<!-- <ClientId>d06e08a4-4321-4d82-a0fc-911e97c67fd9</ClientId> -->
+	<!-- <FullClassName>INGP.Commands.AboutPluginCmd</FullClassName> -->
+	<!-- <Text>AboutPluginCmd</Text> -->
+	<!-- <Description>""</Description> -->
+	<!-- <VisibilityMode>AlwaysVisible</VisibilityMode> -->
+	<!-- <VendorId>ADSK</VendorId> -->
+	<!-- <VendorDescription>markovey@ingradproekt.ru</VendorDescription> -->
+	<!-- </AddIn> -->
+</RevitAddIns>
