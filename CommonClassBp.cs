@@ -204,6 +204,8 @@ namespace CheckBasePoint
 
             try
             {
+
+
                 doc.SynchronizeWithCentral(transOpts, syncOpts);
             }
             catch (Exception e)
@@ -216,6 +218,8 @@ namespace CheckBasePoint
         {
             public bool ShouldWaitForLockAvailability()
             {
+
+
                 return false;
             }
 
