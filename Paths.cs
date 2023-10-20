@@ -4,7 +4,8 @@ namespace CheckBasePoint
 {
     public class Paths
     {
-        public static readonly string bpFilePath =          "X:\\01_Скрипты\\04_BIM\\00_Запуск\\CheckBasePoint\\Check_Bp_coord_files.Json";
+        //public static readonly string bpFilePath =          "X:\\01_Скрипты\\04_BIM\\00_Запуск\\CheckBasePoint\\Check_Bp_coord_files.Json";
+        public static readonly string bpFilePath =          "X:\\01_Скрипты\\04_BIM\\00_Запуск\\CheckBasePoint\\Check_Bp_coord_files__.Json";
         public static readonly string workingFilePath =     "X:\\01_Скрипты\\04_BIM\\00_Запуск\\CheckBasePoint\\Check_Bp_working_files.Json";
         public static readonly string logFile =             "X:\\01_Скрипты\\04_BIM\\00_Запуск\\CheckBasePoint\\Check_Bp_результат.Json";
         public static readonly string errLog =              "X:\\01_Скрипты\\04_BIM\\00_Запуск\\CheckBasePoint\\";

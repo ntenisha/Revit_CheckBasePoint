@@ -10,7 +10,8 @@ using Autodesk.Revit.UI.Events;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
+using System.Windows;
+
 
 namespace CheckBasePoint
 {
@@ -93,10 +94,11 @@ namespace CheckBasePoint
                     Dictionary<string, object> resultDict = new Dictionary<string, object>
                 {
                     { "PathToCoordFile", result[0] },
-                    { "EastWestParam", result[1] },
-                    { "NorthSouthParam", result[2] },
-                    { "ElevationParam", result[3] },
-                    { "AngleToNorthParam", result[4] }
+                    { "EasyName", result[1] },
+                    { "EastWestParam", result[2] },
+                    { "NorthSouthParam", result[3] },
+                    { "ElevationParam", result[4] },
+                    { "AngleToNorthParam", result[5] }
                 };
                     resultObjects.Add(resultDict);
                 }
@@ -224,6 +226,53 @@ namespace CheckBasePoint
             }
 
         }
+
+        public Document OpenDocumentWithDetach(UIApplication app,string modelPath,string tempDir = null)
+        {
+            if (string.IsNullOrEmpty(tempDir))
+            {
+                tempDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "temp_dir");
+            }
+
+            string fileNameWithExtension = Path.GetFileName(modelPath);
+            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileNameWithExtension);
+
+            if (!Directory.Exists(tempDir))
+            {
+                Directory.CreateDirectory(tempDir);
+            }
+
+            string tempFilePath = Path.Combine(tempDir, fileNameWithExtension);
+
+            File.Copy(modelPath, tempFilePath, true);
+
+            Console.WriteLine($"Скопирован файл во временную папку - {tempFilePath}, папка - {tempDir}");
+
+            ModelPath modelPathObj = ModelPathUtils.ConvertUserVisiblePathToModelPath(tempFilePath);
+            OpenOptions openOptions = new OpenOptions
+            {
+                DetachFromCentralOption = DetachFromCentralOption.DetachAndPreserveWorksets
+            };
+
+            Document docBackground = app.Application.OpenDocumentFile(modelPathObj, openOptions);
+
+            Console.WriteLine($"Документ отсоединен и открыт - {docBackground.Title}");
+
+            return docBackground;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         public static async void Application_DialogBoxShowing(object sender, DialogBoxShowingEventArgs e)

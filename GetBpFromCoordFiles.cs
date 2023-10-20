@@ -5,6 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
+using System.Windows.Documents;
+using System.Linq;
 
 namespace CheckBasePoint
 {
@@ -24,7 +27,7 @@ namespace CheckBasePoint
 
             uiApp.DialogBoxShowing += CommonClassBp.Application_DialogBoxShowing;
 
-            List<string> modelPaths = ReadSourcesFromBpCoord(bpFilePath);
+            List<string> modelPaths = ReadFileWithPaths("X:\\01_Скрипты\\04_BIM\\00_Запуск\\CheckBasePoint\\11_11.txt");
             List<List<object>> results = CheckBpFiles(commandData, modelPaths);
 
             uiApp.DialogBoxShowing -= CommonClassBp.Application_DialogBoxShowing;
@@ -34,44 +37,61 @@ namespace CheckBasePoint
             return Result.Succeeded;
         }
 
-
-        public static List<string> ReadSourcesFromBpCoord(string filePath)
+        public static List<string> ReadFileWithPaths(string filePath)
         {
-            List<string> sources = new List<string>();
+            List<string> allFilePaths = new List<string>();
 
             try
             {
-                string jsonText = File.ReadAllText(filePath);
-                JObject jsonObject = JObject.Parse(jsonText);
-                JArray itemsArray = (JArray)jsonObject["Items"];
-
-                foreach (JToken item in itemsArray)
+                using (StreamReader reader = new StreamReader(filePath))
                 {
-                    string source = item["PathToCoordFile"].ToString();
-                    if (File.Exists(source))
+                    string line;
+                    while ((line = reader.ReadLine()) != null)
                     {
-                        sources.Add(source);
+                        string filePath01 = ParsePaths(line);
+                        if (File.Exists(filePath01))
+                        {
+                            //Loger01.Write($"Файл существует: {filePath01}");
+                            allFilePaths.Add(filePath01);
+                        }
+                        else
+                        {
+                            Loger01.Write($"Файла нет: {filePath01}");
+                        }
                     }
-                    else
-                    {
-                        Loger01.Write("Файл не существует." + source);
-                    }
-                    
-                }
-
-                Loger01.Write("Извлечены следующие значения Source из JSON-файла:");
-                foreach (string source in sources)
-                {
-                    Loger01.Write(source);
                 }
             }
             catch (Exception ex)
             {
-                Loger01.Write("Произошла ошибка при чтении JSON-файла: " + ex.Message);
+                Loger01.Write($"Ошибка при чтении файла: {ex.Message}");
+            }
+            List<string> uniqueList = allFilePaths.Distinct().ToList();
+            return uniqueList;
+        }
+
+        public static string ParsePaths(string inputText)
+        {
+            string pattern = "\"(.*?)\"";
+            Regex regex = new Regex(pattern);
+
+            MatchCollection matches = regex.Matches(inputText);
+
+            if (matches.Count > 0)
+            {
+                foreach (Match match in matches)
+                {
+                    string filePath = match.Groups[1].Value;
+                    string normalizedPath = Path.GetFullPath(filePath);
+                    return normalizedPath;
+                }
             }
 
-            return sources;
+            string trimmedText = inputText.Trim(); // Удалить начальные и конечные пробелы
+            trimmedText = trimmedText.Trim(','); // Удалить начальные и конечные запятые
+            string normalizedPath02 = Path.GetFullPath(trimmedText);
+            return normalizedPath02;
         }
+
 
 
         public List<List<object>> CheckBpFiles(ExternalCommandData commandData, List<string> modelPaths)
@@ -80,6 +100,7 @@ namespace CheckBasePoint
             Autodesk.Revit.ApplicationServices.Application app = uiApp.Application;
             List<List<object>> result = new List<List<object>>();
 
+            int nextNumber = 1;
             foreach (string modelPath in modelPaths)
             {
                 try
@@ -93,6 +114,7 @@ namespace CheckBasePoint
                         t.Start();
                         List<object> coordTemp = CommonClassBp.GetBp(cdoc);
                         coordTemp.Insert(0, modelPath);
+                        coordTemp.Insert(1, nextNumber.ToString());
                         result.Add(coordTemp);
                         cdoc.Regenerate();
                         t.Commit();
@@ -110,6 +132,7 @@ namespace CheckBasePoint
                 {
                     Loger01.Write($"Error processing file {modelPath}: {e.Message}");
                 }
+                nextNumber++;
             }
 
             return result;
