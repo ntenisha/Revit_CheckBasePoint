@@ -19,20 +19,15 @@ namespace CheckBasePoint
 
     public class CommonClassBp 
     {
-        public class LogData
-        {
-            public string WorkingFile { get; set; }
-            public string Data { get; set; }
-        }
 
-        public class LogFile
+        public static void WriteResultsToJsonFileWorking(string outputPath, List<List<object>> results)
         {
-            public List<LogData> Items { get; set; }
-        }
+            if (!File.Exists(outputPath))
+            {
+                File.Create(outputPath).Close();
+            }
 
-        public static void WriteJsonWorkingFiles(List<string> logFileResult, string outputPath)
-        {
-            if (logFileResult == null || logFileResult.Count == 0)
+            if (results == null || results.Count == 0)
             {
                 try
                 {
@@ -44,47 +39,101 @@ namespace CheckBasePoint
                     Loger01.Write("Произошла ошибка при записи в файл: " + ex.Message);
                 }
             }
-            else
+
+            try
             {
-                List<LogData> logDataList = new List<LogData>();
+                List<Dictionary<string, object>> resultObjects = new List<Dictionary<string, object>>();
 
-                foreach (string item in logFileResult)
+                foreach (List<object> result in results)
                 {
-                    logDataList.Add(new LogData
-                    {
-                        WorkingFile = item,
-                        Data = DateTime.Now.ToString("yyyy.MM.dd")
-                    });
-                }
-
-                LogFile logFile = new LogFile
+                    Dictionary<string, object> resultDict = new Dictionary<string, object>
                 {
-                    Items = logDataList
+                    { "PathToCoordFile", result[0] },
+                    { "Data", DateTime.Now.ToString("yyyy.MM.dd") },
+                    { "DeltaEastWest", result[1] },
+                    { "DeltaNorthSouth", result[2] },
+                    { "DeltaElevation", result[3] },
+                    { "DeltaAngleToNorth", result[4] }
                 };
-
-                try
-                {
-                    string jsonData = JsonConvert.SerializeObject(logFile, Formatting.Indented);
-
-                    // Проверить, существует ли файл, и создать его, если он отсутствует
-                    if (!File.Exists(outputPath))
-                    {
-                        File.Create(outputPath).Close();
-                    }
-
-                    File.WriteAllText(outputPath, jsonData);
-                    Loger01.Write("Данные успешно записаны в файл: " + outputPath);
+                    resultObjects.Add(resultDict);
                 }
-                catch (Exception ex)
-                {
-                    Loger01.Write("Произошла ошибка при записи в файл: " + ex.Message);
-                }
+
+                Dictionary<string, List<Dictionary<string, object>>> jsonResult = new Dictionary<string, List<Dictionary<string, object>>>
+            {
+                { "Items", resultObjects }
+            };
+
+                string jsonText = JsonConvert.SerializeObject(jsonResult, Formatting.Indented);
+
+                File.WriteAllText(outputPath, jsonText);
+
+                Loger01.Write("Результаты успешно записаны в файл: " + outputPath);
+            }
+            catch (Exception ex)
+            {
+                Loger01.Write("Произошла ошибка при записи в файл: " + ex.Message);
             }
         }
+
+        /*        public static void WriteJsonWorkingFiles(List<string> logFileResult, string outputPath)
+                {
+                    if (logFileResult == null || logFileResult.Count == 0)
+                    {
+                        try
+                        {
+                            File.WriteAllText(outputPath, "Все Ок");
+                            Loger01.Write("Файл записан: " + outputPath);
+                        }
+                        catch (Exception ex)
+                        {
+                            Loger01.Write("Произошла ошибка при записи в файл: " + ex.Message);
+                        }
+                    }
+                    else
+                    {
+                        List<LogData> logDataList = new List<LogData>();
+
+                        foreach (string item in logFileResult)
+                        {
+                            logDataList.Add(new LogData
+                            {
+                                WorkingFile = item,
+                                Data = DateTime.Now.ToString("yyyy.MM.dd")
+                            });
+                        }
+
+                        LogFile logFile = new LogFile
+                        {
+                            Items = logDataList
+                        };
+
+                        try
+                        {
+                            string jsonData = JsonConvert.SerializeObject(logFile, Formatting.Indented);
+
+                            // Проверить, существует ли файл, и создать его, если он отсутствует
+                            if (!File.Exists(outputPath))
+                            {
+                                File.Create(outputPath).Close();
+                            }
+
+                            File.WriteAllText(outputPath, jsonData);
+                            Loger01.Write("Данные успешно записаны в файл: " + outputPath);
+                        }
+                        catch (Exception ex)
+                        {
+                            Loger01.Write("Произошла ошибка при записи в файл: " + ex.Message);
+                        }
+                    }
+                }*/
 
 
         public static void WriteResultsToJsonFile(string outputPath, List<List<object>> results)
         {
+            if (!File.Exists(outputPath))
+            {
+                File.Create(outputPath).Close();
+            }
             try
             {
                 List<Dictionary<string, object>> resultObjects = new List<Dictionary<string, object>>();

@@ -18,6 +18,8 @@ namespace CheckBasePoint
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             UIApplication uiApp = commandData.Application;
+            Paths.verRevit = uiApp.Application.VersionNumber.ToString();
+
 
             RunWF(uiApp);
             return Result.Succeeded;
@@ -26,13 +28,7 @@ namespace CheckBasePoint
 
         public static void RunWF(UIApplication uiApp)
         {
-            //UIDocument uiDoc = uiApp.ActiveUIDocument;
-            //Document doc = uiDoc.Document;
             string _appversion = uiApp.Application.VersionNumber;
-
-
-            string bpFilePath = Paths.bpFilePath;
-            string workingFilePath = Paths.workingFilePath;
             string logFile = Paths.logFile;
 
             Loger01.Write("Запущен CheckBpWorkingFiles");
@@ -41,12 +37,14 @@ namespace CheckBasePoint
             {
                 uiApp.DialogBoxShowing += CommonClassBp.Application_DialogBoxShowing;
                 //List<List<object>> resultsFromWf = CombineDataFromBpAndWfFiles(bpFilePath, workingFilePath);
-                List<List<object>> resultsFromWf = CombineDataFromBpAndWfFiles02(bpFilePath, "X:\\01_Скрипты\\04_BIM\\00_Запуск\\CheckBasePoint\\222.txt");
-                List<string> resCheck = CheckBpFiles(uiApp, resultsFromWf);
+                //List<List<object>> resultsFromWf = CombineDataFromBpAndWfFiles02(bpFilePath, "X:\\01_Скрипты\\04_BIM\\00_Запуск\\CheckBasePoint\\222.txt");
+                List<List<object>> resultsFromWf = CombineDataFromBpAndWfFiles02(Paths.bpFilePath, Paths.workingFilePathUser);
+                //List<string> resCheck = CheckBpFiles(uiApp, resultsFromWf);
+                List<List<object>> resCheck = CheckBpFiles(uiApp, resultsFromWf);
 
                 uiApp.DialogBoxShowing -= CommonClassBp.Application_DialogBoxShowing;
 
-                CommonClassBp.WriteJsonWorkingFiles(resCheck, logFile);
+                CommonClassBp.WriteResultsToJsonFileWorking(logFile, resCheck);
                 Loger01.Write("Завершен CheckBpWorkingFiles\n");
             }
             catch (Exception ex)
@@ -61,7 +59,11 @@ namespace CheckBasePoint
         public static List<List<object>> ReadFileWithPipeDelimiter(string filePath)
         {
             List<List<object>> result = new List<List<object>>();
-
+            if (!File.Exists(filePath))
+            {
+                File.Create(filePath).Close();
+                return result;
+            }
             try
             {
                 using (StreamReader reader = new StreamReader(filePath))
@@ -152,13 +154,17 @@ namespace CheckBasePoint
         }
         public static List<List<object>> ReadBpFile(string filePath)
         {
+            List<List<object>> results = new List<List<object>>();
+            if (!File.Exists(filePath))
+            {
+                File.Create(filePath).Close();
+                return results;
+            }
             try
             {
                 string jsonString = File.ReadAllText(filePath);
 
                 JsonDataBp jsonData = JsonConvert.DeserializeObject<JsonDataBp>(jsonString);
-
-                List<List<object>> results = new List<List<object>>();
 
                 foreach (var item in jsonData.Items)
                 {
@@ -233,7 +239,7 @@ namespace CheckBasePoint
             }
         }
 
-        public static List<List<object>> CombineDataFromBpAndWfFiles(string bpFilePath, string WorkingFilePath)
+/*        public static List<List<object>> CombineDataFromBpAndWfFiles(string bpFilePath, string WorkingFilePath)
         {
             List<List<object>> resultsFromBp = ReadBpFile(bpFilePath);
 
@@ -283,26 +289,24 @@ namespace CheckBasePoint
 
                 return null;
             }
-        }
+        }*/
 
         public static List<List<object>> CombineDataFromBpAndWfFiles02(string bpFilePath, string WorkingFilePath)
         {
+            List<List<object>> combinedResults = new List<List<object>>();
             List<List<object>> resultsFromBp = ReadBpFile(bpFilePath);
+            List<List<object>> resultsFromWf = ReadFileWithPipeDelimiter(WorkingFilePath);
 
             if (resultsFromBp == null)
             {
                 Loger01.Write("Ошибка при чтении данных из файла с результатами ReadBpFile");
-                return null;
+                return combinedResults;
             }
-
-            List<List<object>> resultsFromWf = ReadFileWithPipeDelimiter(WorkingFilePath);
-
-            if (resultsFromWf == null)
+            else if (resultsFromWf == null)
             {
                 Loger01.Write("Ошибка при чтении данных из файла с результатами WorkingFilePath");
-                return null;
+                return combinedResults;
             }
-            List<List<object>> combinedResults = new List<List<object>>();
 
             foreach (List<object> wfItem in resultsFromWf)
             {
@@ -337,7 +341,64 @@ namespace CheckBasePoint
         }
 
 
-        public static List<string> CheckBpFiles(UIApplication uiApp, List<List<object>> modelPaths)
+        public static List<List<object>> CheckBpFiles(UIApplication uiApp, List<List<object>> modelPaths)
+        {
+            Autodesk.Revit.ApplicationServices.Application app = uiApp.Application;
+            List<List<object>> res02 = new List<List<object>>();
+
+            if (!modelPaths.Any())
+            {
+                Loger01.Write("CheckBpFiles Список modelPaths пуст");
+                return res02;
+            }
+
+            foreach (var resultItem in modelPaths)
+            {
+                try
+                {
+                    string modelPath = resultItem[0] as string;
+                    BasicFileInfo bfi = BasicFileInfo.Extract(modelPath);
+                    Tuple<Document, string> docTuple = CommonClassBp.OpenDocBackground(app, modelPath, null);
+                    Document cdoc = docTuple.Item1;
+
+                    using (Transaction t = new Transaction(cdoc, "Change Doc"))
+                    {
+                        t.Start();
+                        List<object> coordTemp = CommonClassBp.GetBp(cdoc);
+                        cdoc.Regenerate();
+                        t.Commit();
+
+                        if (!coordTemp.SequenceEqual(resultItem.Skip(2).Take(4)))
+                        {
+                            List<object> templist = new List<object> { 
+                                modelPath, 
+                                Convert.ToDouble(resultItem[1]) - Convert.ToDouble(coordTemp[0]), 
+                                Convert.ToDouble(resultItem[2]) - Convert.ToDouble(coordTemp[1]), 
+                                Convert.ToDouble(resultItem[3]) - Convert.ToDouble(coordTemp[2]), 
+                                Convert.ToDouble(resultItem[4]) - Convert.ToDouble(coordTemp[3]) 
+                            };
+                            res02.Add(templist);
+                        }
+                    }
+
+                    if (bfi.IsWorkshared)
+                    {
+                        CommonClassBp.SyncWithoutRelinquishing(cdoc);
+                    }
+
+                    cdoc.Close(true);
+                }
+                catch (Exception ex)
+                {
+                    Loger01.Write($"Error processing file {resultItem}: {ex.Message}");
+                }
+            }
+
+            return res02;
+        }
+
+
+/*        public static List<string> CheckBpFiles(UIApplication uiApp, List<List<object>> modelPaths)
         {
             Autodesk.Revit.ApplicationServices.Application app = uiApp.Application;
             List<string> res02 = new List<string>();
@@ -379,7 +440,7 @@ namespace CheckBasePoint
             }
 
             return res02;
-        }
+        }*/
 
 
 

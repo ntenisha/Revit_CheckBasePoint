@@ -8,6 +8,7 @@ using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Documents;
 using System.Linq;
+using System.Collections;
 
 namespace CheckBasePoint
 {
@@ -20,19 +21,20 @@ namespace CheckBasePoint
             UIApplication uiApp = commandData.Application;
             UIDocument uiDoc = uiApp.ActiveUIDocument;
             Document doc = uiDoc.Document;
-
-            string bpFilePath = Paths.bpFilePath;
+            Paths.verRevit = uiApp.Application.VersionNumber.ToString();
+            Loger01.Write("Paths.verRevit\t" + Paths.verRevit);
 
             Loger01.Write("запущен GetBpFromCoordFiles");
 
             uiApp.DialogBoxShowing += CommonClassBp.Application_DialogBoxShowing;
 
-            List<string> modelPaths = ReadFileWithPaths("X:\\01_Скрипты\\04_BIM\\00_Запуск\\CheckBasePoint\\11_11.txt");
+            List<string> modelPaths = ReadFileWithPaths(Paths.bpFilePathUser);
+            Loger01.Write("Paths.bpFilePathUser " + Paths.bpFilePathUser);
             List<List<object>> results = CheckBpFiles(commandData, modelPaths);
 
             uiApp.DialogBoxShowing -= CommonClassBp.Application_DialogBoxShowing;
 
-            CommonClassBp.WriteResultsToJsonFile(bpFilePath, results);
+            CommonClassBp.WriteResultsToJsonFile(Paths.bpFilePath, results);
             Loger01.Write("Завершен GetBpFromCoordFiles\n");
             return Result.Succeeded;
         }
@@ -40,7 +42,12 @@ namespace CheckBasePoint
         public static List<string> ReadFileWithPaths(string filePath)
         {
             List<string> allFilePaths = new List<string>();
-
+            if (!File.Exists(filePath))
+            {
+                File.Create(filePath).Close();
+                return allFilePaths;
+            }
+            
             try
             {
                 using (StreamReader reader = new StreamReader(filePath))
@@ -65,7 +72,27 @@ namespace CheckBasePoint
             {
                 Loger01.Write($"Ошибка при чтении файла: {ex.Message}");
             }
+
+                foreach (var item in allFilePaths)
+                {
+                    foreach (var value in item)
+                    {
+                    Loger01.Write(value + "\t");
+                    }
+                    Loger01.Write("\n");
+                }
+
+
             List<string> uniqueList = allFilePaths.Distinct().ToList();
+
+            foreach (var item in uniqueList)
+            {
+                foreach (var value in item)
+                {
+                    Loger01.Write(value + "\t");
+                }
+                Loger01.Write("\n");
+            }
             return uniqueList;
         }
 
@@ -99,6 +126,11 @@ namespace CheckBasePoint
             UIApplication uiApp = commandData.Application;
             Autodesk.Revit.ApplicationServices.Application app = uiApp.Application;
             List<List<object>> result = new List<List<object>>();
+            if (!modelPaths.Any())
+            {
+                Loger01.Write("CheckBpFiles Список modelPaths пуст");
+                return result;
+            }
 
             int nextNumber = 1;
             foreach (string modelPath in modelPaths)
