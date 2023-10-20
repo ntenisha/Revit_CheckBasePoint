@@ -37,31 +37,24 @@ namespace CheckBasePoint
 
             Loger01.Write("Запущен CheckBpWorkingFiles");
 
+            try
+            {
+                uiApp.DialogBoxShowing += CommonClassBp.Application_DialogBoxShowing;
+                //List<List<object>> resultsFromWf = CombineDataFromBpAndWfFiles(bpFilePath, workingFilePath);
+                List<List<object>> resultsFromWf = CombineDataFromBpAndWfFiles02(bpFilePath, "X:\\01_Скрипты\\04_BIM\\00_Запуск\\CheckBasePoint\\222.txt");
+                List<string> resCheck = CheckBpFiles(uiApp, resultsFromWf);
 
+                uiApp.DialogBoxShowing -= CommonClassBp.Application_DialogBoxShowing;
 
-            uiApp.DialogBoxShowing += CommonClassBp.Application_DialogBoxShowing;
+                CommonClassBp.WriteJsonWorkingFiles(resCheck, logFile);
+                Loger01.Write("Завершен CheckBpWorkingFiles\n");
+            }
+            catch (Exception ex)
+            {
+                Loger01.Write("Ошибка в методе RunWF");
+                Loger01.LogEx(ex);
 
-            CombineDataFromBpAndWfFiles02(bpFilePath, "X:\\01_Скрипты\\04_BIM\\00_Запуск\\CheckBasePoint\\222.txt");
-
-            uiApp.DialogBoxShowing -= CommonClassBp.Application_DialogBoxShowing;
-
-            /*           try
-                       {
-                           uiApp.DialogBoxShowing += CommonClassBp.Application_DialogBoxShowing;
-                           List<List<object>> resultsFromWf = CombineDataFromBpAndWfFiles(bpFilePath, workingFilePath);
-                           List<string> resCheck = CheckBpFiles(uiApp, resultsFromWf);
-
-                           uiApp.DialogBoxShowing -= CommonClassBp.Application_DialogBoxShowing;
-
-                           CommonClassBp.WriteJsonWorkingFiles(resCheck, logFile);
-                           Loger01.Write("Завершен CheckBpWorkingFiles\n");
-                       }
-                       catch (Exception ex)
-                       {
-                           Loger01.Write("Ошибка в методе RunWF");
-                           Loger01.LogEx(ex);
-
-                       }*/
+            }
 
         }
 
@@ -177,11 +170,7 @@ namespace CheckBasePoint
                     item.ElevationParam,
                     item.AngleToNorthParam
                 };
-                    Loger01.Write("item.EasyName" + item.EasyName.ToString());
-                    Loger01.Write("item.EastWestParam" + item.EastWestParam.ToString());
-                    Loger01.Write("item.NorthSouthParam" + item.NorthSouthParam.ToString());
-                    Loger01.Write("item.ElevationParam" + item.ElevationParam.ToString());
-                    Loger01.Write("item.AngleToNorthParam" + item.AngleToNorthParam.ToString());
+
                     results.Add(resultItem);
                 }
 
@@ -283,6 +272,8 @@ namespace CheckBasePoint
                     resultsFfromJson.Add(resultItem);
                 }
 
+
+
                 return resultsFfromJson;
             }
             catch (Exception ex)
@@ -319,10 +310,8 @@ namespace CheckBasePoint
 
                 foreach (List<object> bpItem in resultsFromBp)
                 {
-                    Loger01.Write("000wfItem[1] " + wfItem[1].ToString());
-                    Loger01.Write("000bpItem[1] " + bpItem[1].ToString());
                     // Сравниваем второй элемент из wfItem с первым элементом из bpItem
-                    if (wfItem[1].Equals(bpItem[1]))
+                    if (wfItem[1].Equals(bpItem[0]))
                     {
                         // Найдено совпадение, создаем новый список и добавляем нужные элементы
                         List<object> combinedItem = new List<object>
@@ -333,23 +322,17 @@ namespace CheckBasePoint
                             bpItem[3],
                             bpItem[4]  
                         };
-                        Loger01.Write("wfItem[0] " + wfItem[0].ToString());
-                        Loger01.Write("wfItem[1] " + wfItem[1].ToString());
-                        Loger01.Write("bpItem[2] " + bpItem[2].ToString());
-                        Loger01.Write("bpItem[3] " + bpItem[3].ToString());
-                        Loger01.Write("bpItem[4] " + bpItem[4].ToString());
+
                         combinedResults.Add(combinedItem);
                         foundMatch = true;
                         break; // Если совпадение найдено, выходим из внутреннего цикла
                     }
                 }
-
                 if (!foundMatch)
                 {
                     Loger01.Write($"Ошибка нет совпадения" + wfItem[1].ToString());
                 }
             }
-
             return combinedResults;
         }
 
@@ -377,6 +360,7 @@ namespace CheckBasePoint
 
                         if (!coordTemp.SequenceEqual(resultItem.Skip(2).Take(4)))
                         {
+                            //List<object> templist = (modelPath,);
                             res02.Add(modelPath);
                         }
                     }
