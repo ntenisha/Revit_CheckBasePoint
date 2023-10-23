@@ -2,19 +2,39 @@
 
 namespace CheckBasePoint
 {
+    public static class PathsStatic
+    {
+        public static string verRevit;
+        public static string directoryPath =            Path.Combine("X:\\01_Скрипты\\04_BIM\\00_Запуск\\CheckBasePoint\\");
+        public static string errLog =                   Path.Combine(directoryPath);
+
+    }
 
     public class Paths
     {
-        public static string verRevit;
+        private string _verRevit;
+        public string BpFilePath { get; private set; }
+        public string WorkingFilePath { get; private set; }
+        public string BpFilePathUser { get; private set; }
+        public string WorkingFilePathUser { get; private set; }
+        public string LogFile { get; private set; }
+        public string ErrLog { get; private set; }
 
-        public static readonly string DirectoryPath =       Path.Combine("X:\\01_Скрипты\\04_BIM\\00_Запуск\\CheckBasePoint\\");
-        public static readonly string bpFilePath =          Path.Combine(DirectoryPath, "Json\\Check_Bp_coord_files"     + verRevit + ".Json");
-        public static readonly string workingFilePath =     Path.Combine(DirectoryPath, "Json\\Check_Bp_working_files"   + verRevit + ".Json");
-        public static readonly string bpFilePathUser =      Path.Combine(DirectoryPath, "Check_Bp_coord_files"           + verRevit + ".txt");
-        public static readonly string workingFilePathUser = Path.Combine(DirectoryPath, "Check_Bp_working_files"         + verRevit + ".txt");
-        public static readonly string logFile =             Path.Combine(DirectoryPath, "Check_Bp_результат"             + verRevit + ".Json");
-        public static readonly string errLog =              Path.Combine(DirectoryPath);
+        public Paths(string verRevit)
+        {
+            _verRevit = verRevit;
 
+            var directoryPath = Path.Combine("X:\\01_Скрипты\\04_BIM\\00_Запуск\\CheckBasePoint\\");
+
+            BpFilePath = Path.Combine(directoryPath, "Json\\Check_Bp_coord_files" + verRevit + ".Json");
+            WorkingFilePath = Path.Combine(directoryPath, "Json\\Check_Bp_working_files" + verRevit + ".Json");
+            BpFilePathUser = Path.Combine(directoryPath, "Check_Bp_coord_files" + verRevit + ".txt");
+            WorkingFilePathUser = Path.Combine(directoryPath, "Check_Bp_working_files" + verRevit + ".txt");
+            LogFile = Path.Combine(directoryPath, "Check_Bp_результат" + verRevit + ".Json");
+            ErrLog = Path.Combine(directoryPath);
+
+
+        }
 
     }
 }

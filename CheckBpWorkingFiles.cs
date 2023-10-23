@@ -18,8 +18,6 @@ namespace CheckBasePoint
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             UIApplication uiApp = commandData.Application;
-            Paths.verRevit = uiApp.Application.VersionNumber.ToString();
-
 
             RunWF(uiApp);
             return Result.Succeeded;
@@ -29,22 +27,21 @@ namespace CheckBasePoint
         public static void RunWF(UIApplication uiApp)
         {
             string _appversion = uiApp.Application.VersionNumber;
-            string logFile = Paths.logFile;
+ 
+            Paths path01 = new Paths(uiApp.Application.VersionNumber.ToString());
+            PathsStatic.verRevit = uiApp.Application.VersionNumber.ToString();
 
             Loger01.Write("Запущен CheckBpWorkingFiles");
-
             try
             {
                 uiApp.DialogBoxShowing += CommonClassBp.Application_DialogBoxShowing;
-                //List<List<object>> resultsFromWf = CombineDataFromBpAndWfFiles(bpFilePath, workingFilePath);
-                //List<List<object>> resultsFromWf = CombineDataFromBpAndWfFiles02(bpFilePath, "X:\\01_Скрипты\\04_BIM\\00_Запуск\\CheckBasePoint\\222.txt");
-                List<List<object>> resultsFromWf = CombineDataFromBpAndWfFiles02(Paths.bpFilePath, Paths.workingFilePathUser);
-                //List<string> resCheck = CheckBpFiles(uiApp, resultsFromWf);
+                List<List<object>> resultsFromWf = CombineDataFromBpAndWfFiles02(path01.BpFilePath, path01.WorkingFilePathUser);
                 List<List<object>> resCheck = CheckBpFiles(uiApp, resultsFromWf);
 
                 uiApp.DialogBoxShowing -= CommonClassBp.Application_DialogBoxShowing;
 
-                CommonClassBp.WriteResultsToJsonFileWorking(logFile, resCheck);
+                CommonClassBp.WriteResultsToJsonFileWorking(path01.LogFile, resCheck);
+                CommonClassBp.DeleteFilesAndSubfolders(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "temp_dir"));
                 Loger01.Write("Завершен CheckBpWorkingFiles\n");
             }
             catch (Exception ex)
@@ -320,8 +317,8 @@ namespace CheckBasePoint
                         // Найдено совпадение, создаем новый список и добавляем нужные элементы
                         List<object> combinedItem = new List<object>
                         {
-                            wfItem[0], 
-                            wfItem[1], 
+                            wfItem[0],
+                            bpItem[1], 
                             bpItem[2],
                             bpItem[3],
                             bpItem[4]  
@@ -358,17 +355,17 @@ namespace CheckBasePoint
                 {
                     string modelPath = resultItem[0] as string;
                     BasicFileInfo bfi = BasicFileInfo.Extract(modelPath);
-                    Tuple<Document, string> docTuple = CommonClassBp.OpenDocBackground(app, modelPath, null);
+                    Tuple<Document, string> docTuple = CommonClassBp.OpenDocumentWithDetach(app, modelPath, null);
                     Document cdoc = docTuple.Item1;
 
-                    using (Transaction t = new Transaction(cdoc, "Change Doc"))
-                    {
-                        t.Start();
+                    //using (Transaction t = new Transaction(cdoc, "Change Doc"))
+                    //{
+                    //    t.Start();
                         List<object> coordTemp = CommonClassBp.GetBp(cdoc);
-                        cdoc.Regenerate();
-                        t.Commit();
+                        //cdoc.Regenerate();
+                        //t.Commit();
 
-                        if (!coordTemp.SequenceEqual(resultItem.Skip(2).Take(4)))
+                        if (!coordTemp.SequenceEqual(resultItem.Skip(1).Take(4)))
                         {
                             List<object> templist = new List<object> { 
                                 modelPath, 
@@ -379,14 +376,14 @@ namespace CheckBasePoint
                             };
                             res02.Add(templist);
                         }
-                    }
+                    //}
 
-                    if (bfi.IsWorkshared)
+/*                    if (bfi.IsWorkshared)
                     {
                         CommonClassBp.SyncWithoutRelinquishing(cdoc);
-                    }
+                    }*/
 
-                    cdoc.Close(true);
+                    cdoc.Close(false);
                 }
                 catch (Exception ex)
                 {

@@ -21,20 +21,24 @@ namespace CheckBasePoint
             UIApplication uiApp = commandData.Application;
             UIDocument uiDoc = uiApp.ActiveUIDocument;
             Document doc = uiDoc.Document;
-            Paths.verRevit = uiApp.Application.VersionNumber.ToString();
-            Loger01.Write("Paths.verRevit\t" + Paths.verRevit);
 
+            Paths path01 = new Paths(uiApp.Application.VersionNumber.ToString());
+            PathsStatic.verRevit = uiApp.Application.VersionNumber.ToString();
             Loger01.Write("запущен GetBpFromCoordFiles");
-
+            //исправить
+            // bpFilePathUser = Paths.DirectoryPath + "Check_Bp_coord_files" + Paths.verRevit + ".txt";
+            //string bpFilePath = Paths.DirectoryPath + "Json\\Check_Bp_coord_files" + Paths.verRevit + ".Json";
             uiApp.DialogBoxShowing += CommonClassBp.Application_DialogBoxShowing;
 
-            List<string> modelPaths = ReadFileWithPaths(Paths.bpFilePathUser);
-            Loger01.Write("Paths.bpFilePathUser " + Paths.bpFilePathUser);
+            List<string> modelPaths = ReadFileWithPaths(path01.BpFilePathUser);
+
             List<List<object>> results = CheckBpFiles(commandData, modelPaths);
 
             uiApp.DialogBoxShowing -= CommonClassBp.Application_DialogBoxShowing;
 
-            CommonClassBp.WriteResultsToJsonFile(Paths.bpFilePath, results);
+            CommonClassBp.WriteResultsToJsonFile(path01.BpFilePath, results);
+
+            CommonClassBp.DeleteFilesAndSubfolders(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "temp_dir"));
             Loger01.Write("Завершен GetBpFromCoordFiles\n");
             return Result.Succeeded;
         }
@@ -58,7 +62,6 @@ namespace CheckBasePoint
                         string filePath01 = ParsePaths(line);
                         if (File.Exists(filePath01))
                         {
-                            //Loger01.Write($"Файл существует: {filePath01}");
                             allFilePaths.Add(filePath01);
                         }
                         else
@@ -73,26 +76,8 @@ namespace CheckBasePoint
                 Loger01.Write($"Ошибка при чтении файла: {ex.Message}");
             }
 
-                foreach (var item in allFilePaths)
-                {
-                    foreach (var value in item)
-                    {
-                    Loger01.Write(value + "\t");
-                    }
-                    Loger01.Write("\n");
-                }
-
-
             List<string> uniqueList = allFilePaths.Distinct().ToList();
 
-            foreach (var item in uniqueList)
-            {
-                foreach (var value in item)
-                {
-                    Loger01.Write(value + "\t");
-                }
-                Loger01.Write("\n");
-            }
             return uniqueList;
         }
 
@@ -138,31 +123,32 @@ namespace CheckBasePoint
                 try
                 {
                     BasicFileInfo bfi = BasicFileInfo.Extract(modelPath);
-                    Tuple<Document, string> docTuple = CommonClassBp.OpenDocBackground(app, modelPath);
+                    Tuple<Document, string> docTuple = CommonClassBp.OpenDocumentWithDetach(app, modelPath);
                     Document cdoc = docTuple.Item1;
 
-                    using (Transaction t = new Transaction(cdoc, "Change Doc"))
-                    {
-                        t.Start();
+                    //using (Transaction t = new Transaction(cdoc, "Change Doc"))
+                    //{
+                    //    t.Start();
                         List<object> coordTemp = CommonClassBp.GetBp(cdoc);
                         coordTemp.Insert(0, modelPath);
                         coordTemp.Insert(1, nextNumber.ToString());
                         result.Add(coordTemp);
-                        cdoc.Regenerate();
-                        t.Commit();
-                    }
+                    //    cdoc.Regenerate();
+                    //    t.Commit();
+                    //}
 
-                    if (bfi.IsWorkshared)
+/*                    if (bfi.IsWorkshared)
                     {
                         CommonClassBp.SyncWithoutRelinquishing(cdoc);
-                    }
+                    }*/
 
 
-                    cdoc.Close(true);
+                    cdoc.Close(false);
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    Loger01.Write($"Error processing file {modelPath}: {e.Message}");
+                    Loger01.Write($"Error processing file {modelPath}: {ex.Message}");
+                    Loger01.LogEx(ex);
                 }
                 nextNumber++;
             }

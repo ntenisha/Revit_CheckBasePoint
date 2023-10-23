@@ -48,7 +48,7 @@ namespace CheckBasePoint
                 {
                     Dictionary<string, object> resultDict = new Dictionary<string, object>
                 {
-                    { "PathToCoordFile", result[0] },
+                    { "PathToModel", result[0] },
                     { "Data", DateTime.Now.ToString("yyyy.MM.dd") },
                     { "DeltaEastWest", result[1] },
                     { "DeltaNorthSouth", result[2] },
@@ -259,9 +259,9 @@ namespace CheckBasePoint
 
                 doc.SynchronizeWithCentral(transOpts, syncOpts);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                TaskDialog.Show("Synchronize Failed", e.Message);
+                Loger01.LogEx(ex);
             }
         }
 
@@ -276,8 +276,12 @@ namespace CheckBasePoint
 
         }
 
-        public Document OpenDocumentWithDetach(UIApplication app,string modelPath,string tempDir = null)
+        public static Tuple<Document, string> OpenDocumentWithDetach(Autodesk.Revit.ApplicationServices.Application app, string modelPath, WorksetConfiguration worksetConfiguration = null, string tempDir = null)
         {
+            //WorksetConfigurationOption.CloseAllWorksets) - с закрытием всех раб наборов
+            //WorksetConfigurationOption.OpenAllWorksets) - с открытием всех раб наборов
+            //WorksetConfigurationOption.OpenLastViewed) - с открытием последних просмотренных
+
             if (string.IsNullOrEmpty(tempDir))
             {
                 tempDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "temp_dir");
@@ -295,7 +299,7 @@ namespace CheckBasePoint
 
             File.Copy(modelPath, tempFilePath, true);
 
-            Console.WriteLine($"Скопирован файл во временную папку - {tempFilePath}, папка - {tempDir}");
+            Loger01.Write($"Скопирован файл во временную папку - {tempFilePath}, папка - {tempDir}");
 
             ModelPath modelPathObj = ModelPathUtils.ConvertUserVisiblePathToModelPath(tempFilePath);
             OpenOptions openOptions = new OpenOptions
@@ -303,12 +307,24 @@ namespace CheckBasePoint
                 DetachFromCentralOption = DetachFromCentralOption.DetachAndPreserveWorksets
             };
 
-            Document docBackground = app.Application.OpenDocumentFile(modelPathObj, openOptions);
+            if (worksetConfiguration == null)
+            {
+                worksetConfiguration = new WorksetConfiguration(WorksetConfigurationOption.CloseAllWorksets);
+            }
+            openOptions.SetOpenWorksetsConfiguration(worksetConfiguration);
 
-            Console.WriteLine($"Документ отсоединен и открыт - {docBackground.Title}");
+            Document docBackground = app.OpenDocumentFile(modelPathObj, openOptions);
 
-            return docBackground;
+            Loger01.Write($"Документ отсоединен и открыт - {docBackground.Title}");
+
+            return new Tuple<Document, string>(docBackground, tempFilePath);
         }
+
+
+
+
+
+
 
 
 
@@ -458,7 +474,41 @@ namespace CheckBasePoint
         }
 
 
+        public static void DeleteFilesAndSubfolders(string folderPath)
+        {
+            try
+            {
+                if (Directory.Exists(folderPath))
+                {
+                    // Удаляем все файлы в папке
+                    string[] files = Directory.GetFiles(folderPath);
+                    foreach (string file in files)
+                    {
+                        File.Delete(file);
+                    }
 
+                    // Рекурсивно удаляем все подпапки и их содержимое
+                    string[] subfolders = Directory.GetDirectories(folderPath);
+                    foreach (string subfolder in subfolders)
+                    {
+                        DeleteFilesAndSubfolders(subfolder);
+                    }
+
+                    // Удаляем саму папку
+                    Directory.Delete(folderPath);
+
+                    Loger01.Write("Все файлы и подпапки в указанной папке были удалены.");
+                }
+                else
+                {
+                    Loger01.Write("Указанная папка не существует.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Loger01.Write("Произошла ошибка при удалении файлов и папок: " + ex.Message);
+            }
+        }
 
 
 

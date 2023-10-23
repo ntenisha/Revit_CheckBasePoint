@@ -32,7 +32,9 @@ namespace CheckBasePoint
 
         public Result OnStartup(UIControlledApplication application)
         {
-            Paths.verRevit = application.ControlledApplication.VersionNumber.ToString();
+
+            Paths path01 = new Paths(application.ControlledApplication.VersionNumber.ToString());
+            PathsStatic.verRevit = application.ControlledApplication.VersionNumber.ToString();
             Loger01.Write("Application startup " + Assembly.GetExecutingAssembly().GetName().Version.ToString());
 
             application.ControlledApplication.ApplicationInitialized += new EventHandler<ApplicationInitializedEventArgs>(Initialized);

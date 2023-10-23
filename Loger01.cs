@@ -13,12 +13,10 @@ namespace CheckBasePoint
             {
                 // Путь .\\Log
                 //*string pathToLog = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Log");
-
-                string pathToLog = Paths.errLog;
+                string pathToLog = PathsStatic.errLog;
                 if (!Directory.Exists(pathToLog))
                     Directory.CreateDirectory(pathToLog); // Создаем директорию, если нужно
-                //string filename = Path.Combine(pathToLog, "exLog.txt");
-                string filename = Path.Combine(pathToLog, "exLog"+ Paths.verRevit + ".txt");
+                string filename = Path.Combine(pathToLog, "exLog"+ PathsStatic.verRevit + ".txt");
                 string fullText = string.Format("[{0:dd.MM.yyy HH:mm:ss.fff}] [{1}.{2}()] {3} {4}\r\n", DateTime.Now, ex.TargetSite.DeclaringType, ex.TargetSite.Name, ex.Message , ex.StackTrace);
                 lock (sync)
                 {
@@ -37,10 +35,11 @@ namespace CheckBasePoint
                 // Путь .\\Log
                 //*string pathToLog = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Log");
 
-                string pathToLog = Paths.errLog;
+                string pathToLog = PathsStatic.errLog;
+                //string pathToLog = "X:\\01_Скрипты\\04_BIM\\00_Запуск\\CheckBasePoint\\";
                 if (!Directory.Exists(pathToLog))
                     Directory.CreateDirectory(pathToLog); // Создаем директорию, если нужно
-                string filename = Path.Combine(pathToLog, "exLog" + Paths.verRevit + ".txt");
+                string filename = Path.Combine(pathToLog, "exLog" + PathsStatic.verRevit + ".txt");
                 string fullText = string.Format("[{0:dd.MM.yyy HH:mm:ss.fff}] {1}\r\n", DateTime.Now, Text);
                 lock (sync)
                 {
