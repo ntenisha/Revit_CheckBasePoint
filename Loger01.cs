@@ -36,7 +36,6 @@ namespace CheckBasePoint
                 //*string pathToLog = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Log");
 
                 string pathToLog = PathsStatic.errLog;
-                //string pathToLog = "X:\\01_Скрипты\\04_BIM\\00_Запуск\\CheckBasePoint\\";
                 if (!Directory.Exists(pathToLog))
                     Directory.CreateDirectory(pathToLog); // Создаем директорию, если нужно
                 string filename = Path.Combine(pathToLog, "exLog" + PathsStatic.verRevit + ".txt");

@@ -4,13 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
-using Autodesk.Revit.UI;
 using System.Linq;
 using Autodesk.Revit.UI.Events;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 
 
 namespace CheckBasePoint
@@ -74,59 +72,6 @@ namespace CheckBasePoint
                 Loger01.Write("Произошла ошибка при записи в файл: " + ex.Message);
             }
         }
-
-        /*        public static void WriteJsonWorkingFiles(List<string> logFileResult, string outputPath)
-                {
-                    if (logFileResult == null || logFileResult.Count == 0)
-                    {
-                        try
-                        {
-                            File.WriteAllText(outputPath, "Все Ок");
-                            Loger01.Write("Файл записан: " + outputPath);
-                        }
-                        catch (Exception ex)
-                        {
-                            Loger01.Write("Произошла ошибка при записи в файл: " + ex.Message);
-                        }
-                    }
-                    else
-                    {
-                        List<LogData> logDataList = new List<LogData>();
-
-                        foreach (string item in logFileResult)
-                        {
-                            logDataList.Add(new LogData
-                            {
-                                WorkingFile = item,
-                                Data = DateTime.Now.ToString("yyyy.MM.dd")
-                            });
-                        }
-
-                        LogFile logFile = new LogFile
-                        {
-                            Items = logDataList
-                        };
-
-                        try
-                        {
-                            string jsonData = JsonConvert.SerializeObject(logFile, Formatting.Indented);
-
-                            // Проверить, существует ли файл, и создать его, если он отсутствует
-                            if (!File.Exists(outputPath))
-                            {
-                                File.Create(outputPath).Close();
-                            }
-
-                            File.WriteAllText(outputPath, jsonData);
-                            Loger01.Write("Данные успешно записаны в файл: " + outputPath);
-                        }
-                        catch (Exception ex)
-                        {
-                            Loger01.Write("Произошла ошибка при записи в файл: " + ex.Message);
-                        }
-                    }
-                }*/
-
 
         public static void WriteResultsToJsonFile(string outputPath, List<List<object>> results)
         {

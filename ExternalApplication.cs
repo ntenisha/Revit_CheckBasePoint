@@ -3,24 +3,14 @@ using Autodesk.Revit.UI;
 using Autodesk.Revit.DB;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using TimerDlg;
-using Autodesk.Revit.ApplicationServices;
+
 
 namespace CheckBasePoint
 {
     public class ExternalApplication : IExternalApplication
     {
         public static readonly string PATH_LOCACTION = Assembly.GetExecutingAssembly().Location;
-        //public static readonly string PATH_LOCACTIONDIR = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        //public static readonly string PATH_FILELOG = Path.Combine(System.IO.Path.GetTempPath(), "WSExport_" + DateTime.Now.ToString("yyyyMMdd") + ".log");
-        //public static readonly string PATH_CONFIG = Path.Combine(PATH_LOCACTIONDIR, "config.json");
-
 
         public void Initialized(object sender, ApplicationInitializedEventArgs e)
 

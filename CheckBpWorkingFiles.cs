@@ -111,8 +111,8 @@ namespace CheckBasePoint
                 }
             }
 
-            string trimmedText = inputText.Trim(); // Удалить начальные и конечные пробелы
-            trimmedText = trimmedText.Trim(','); // Удалить начальные и конечные запятые
+            string trimmedText = inputText.Trim(); 
+            trimmedText = trimmedText.Trim(','); 
             string normalizedPath02 = Path.GetFullPath(trimmedText);
             return normalizedPath02;
         }
@@ -127,7 +127,6 @@ namespace CheckBasePoint
             }
             else
             {
-                // Обрезка пробелов, запятых и еще раз пробелов
                 string trimmed = input.Trim();
                 trimmed = trimmed.Trim(',');
                 trimmed = trimmed.Trim();
@@ -236,58 +235,6 @@ namespace CheckBasePoint
             }
         }
 
-/*        public static List<List<object>> CombineDataFromBpAndWfFiles(string bpFilePath, string WorkingFilePath)
-        {
-            List<List<object>> resultsFromBp = ReadBpFile(bpFilePath);
-
-            if (resultsFromBp == null)
-            {
-                Loger01.Write("Ошибка при чтении данных из файла с результатами ReadBpFile");
-                return null;
-            }
-
-            try
-            {
-                string jsonString = File.ReadAllText(WorkingFilePath);
-
-                JsonDataWF jsonData = JsonConvert.DeserializeObject<JsonDataWF>(jsonString);
-
-                List<List<object>> resultsFfromJson = new List<List<object>>();
-
-                foreach (var item in jsonData.Items)
-                {
-                    List<object> resultItem = new List<object>
-            {
-                item.WorkingFile,
-                item.EasyName
-            };
-
-                    var matchingItem = resultsFromBp.FirstOrDefault(bpItem => bpItem[0].ToString() == item.EasyName);
-
-                    if (matchingItem != null && matchingItem.Count >= 5)
-                    {
-                        resultItem.Add(matchingItem[1]);
-                        resultItem.Add(matchingItem[2]);
-                        resultItem.Add(matchingItem[3]);
-                        resultItem.Add(matchingItem[4]);
-                    }
-
-                    resultsFfromJson.Add(resultItem);
-                }
-
-
-
-                return resultsFfromJson;
-            }
-            catch (Exception ex)
-            {
-                Loger01.Write("Произошла ошибка при чтении файла JSON: ");
-                Loger01.LogEx(ex);
-
-                return null;
-            }
-        }*/
-
         public static List<List<object>> CombineDataFromBpAndWfFiles02(string bpFilePath, string WorkingFilePath)
         {
             List<List<object>> combinedResults = new List<List<object>>();
@@ -358,30 +305,19 @@ namespace CheckBasePoint
                     Tuple<Document, string> docTuple = CommonClassBp.OpenDocumentWithDetach(app, modelPath, null);
                     Document cdoc = docTuple.Item1;
 
-                    //using (Transaction t = new Transaction(cdoc, "Change Doc"))
-                    //{
-                    //    t.Start();
-                        List<object> coordTemp = CommonClassBp.GetBp(cdoc);
-                        //cdoc.Regenerate();
-                        //t.Commit();
+                    List<object> coordTemp = CommonClassBp.GetBp(cdoc);
 
-                        if (!coordTemp.SequenceEqual(resultItem.Skip(1).Take(4)))
-                        {
-                            List<object> templist = new List<object> { 
-                                modelPath, 
-                                Convert.ToDouble(resultItem[1]) - Convert.ToDouble(coordTemp[0]), 
-                                Convert.ToDouble(resultItem[2]) - Convert.ToDouble(coordTemp[1]), 
-                                Convert.ToDouble(resultItem[3]) - Convert.ToDouble(coordTemp[2]), 
-                                Convert.ToDouble(resultItem[4]) - Convert.ToDouble(coordTemp[3]) 
-                            };
-                            res02.Add(templist);
-                        }
-                    //}
-
-/*                    if (bfi.IsWorkshared)
+                    if (!coordTemp.SequenceEqual(resultItem.Skip(1).Take(4)))
                     {
-                        CommonClassBp.SyncWithoutRelinquishing(cdoc);
-                    }*/
+                        List<object> templist = new List<object> { 
+                            modelPath, 
+                            Convert.ToDouble(resultItem[1]) - Convert.ToDouble(coordTemp[0]), 
+                            Convert.ToDouble(resultItem[2]) - Convert.ToDouble(coordTemp[1]), 
+                            Convert.ToDouble(resultItem[3]) - Convert.ToDouble(coordTemp[2]), 
+                            Convert.ToDouble(resultItem[4]) - Convert.ToDouble(coordTemp[3]) 
+                        };
+                        res02.Add(templist);
+                    }
 
                     cdoc.Close(false);
                 }
@@ -393,54 +329,6 @@ namespace CheckBasePoint
 
             return res02;
         }
-
-
-/*        public static List<string> CheckBpFiles(UIApplication uiApp, List<List<object>> modelPaths)
-        {
-            Autodesk.Revit.ApplicationServices.Application app = uiApp.Application;
-            List<string> res02 = new List<string>();
-
-            foreach (var resultItem in modelPaths)
-            {
-                try
-                {
-                    string modelPath = resultItem[0] as string;
-                    BasicFileInfo bfi = BasicFileInfo.Extract(modelPath);
-                    Tuple<Document, string> docTuple = CommonClassBp.OpenDocBackground(app, modelPath, null);
-                    Document cdoc = docTuple.Item1;
-
-                    using (Transaction t = new Transaction(cdoc, "Change Doc"))
-                    {
-                        t.Start();
-                        List<object> coordTemp = CommonClassBp.GetBp(cdoc);
-                        cdoc.Regenerate();
-                        t.Commit();
-
-                        if (!coordTemp.SequenceEqual(resultItem.Skip(2).Take(4)))
-                        {
-                            //List<object> templist = (modelPath,);
-                            res02.Add(modelPath);
-                        }
-                    }
-
-                    if (bfi.IsWorkshared)
-                    {
-                        CommonClassBp.SyncWithoutRelinquishing(cdoc);
-                    }
-
-                    cdoc.Close(true);
-                }
-                catch (Exception ex)
-                {
-                    Loger01.Write($"Error processing file {resultItem}: {ex.Message}");
-                }
-            }
-
-            return res02;
-        }*/
-
-
-
 
     }
 

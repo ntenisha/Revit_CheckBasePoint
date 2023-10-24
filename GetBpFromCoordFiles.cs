@@ -4,11 +4,8 @@ using Autodesk.Revit.UI;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
-using System.Windows.Documents;
 using System.Linq;
-using System.Collections;
 
 namespace CheckBasePoint
 {
@@ -126,22 +123,10 @@ namespace CheckBasePoint
                     Tuple<Document, string> docTuple = CommonClassBp.OpenDocumentWithDetach(app, modelPath);
                     Document cdoc = docTuple.Item1;
 
-                    //using (Transaction t = new Transaction(cdoc, "Change Doc"))
-                    //{
-                    //    t.Start();
-                        List<object> coordTemp = CommonClassBp.GetBp(cdoc);
-                        coordTemp.Insert(0, modelPath);
-                        coordTemp.Insert(1, nextNumber.ToString());
-                        result.Add(coordTemp);
-                    //    cdoc.Regenerate();
-                    //    t.Commit();
-                    //}
-
-/*                    if (bfi.IsWorkshared)
-                    {
-                        CommonClassBp.SyncWithoutRelinquishing(cdoc);
-                    }*/
-
+                    List<object> coordTemp = CommonClassBp.GetBp(cdoc);
+                    coordTemp.Insert(0, modelPath);
+                    coordTemp.Insert(1, nextNumber.ToString());
+                    result.Add(coordTemp);
 
                     cdoc.Close(false);
                 }
