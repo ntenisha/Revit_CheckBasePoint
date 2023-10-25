@@ -31,6 +31,7 @@ namespace CheckBasePoint
                 {
                     File.WriteAllText(outputPath, "Все Ок");
                     Loger01.Write("Файл записан: " + outputPath);
+                    return;
                 }
                 catch (Exception ex)
                 {
@@ -264,26 +265,6 @@ namespace CheckBasePoint
 
             return new Tuple<Document, string>(docBackground, tempFilePath);
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         public static async void Application_DialogBoxShowing(object sender, DialogBoxShowingEventArgs e)
         {

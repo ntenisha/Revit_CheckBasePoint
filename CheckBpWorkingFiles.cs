@@ -74,8 +74,7 @@ namespace CheckBasePoint
                         {
                             string temp01 = ParsePaths(parts[0]);
                             string temp02 = ParseValueInQuotesOrTrim(parts[1]);
-                            Loger01.Write("temp01" + temp01.ToString());
-                            Loger01.Write("temp02" + temp02.ToString());
+                            Loger01.Write("value 1\t" + temp01.ToString() + "\tvalue 2\t" + temp02.ToString());
                             List<object> row = new List<object> { temp01, temp02 };
                             result.Add(row);
                         }
