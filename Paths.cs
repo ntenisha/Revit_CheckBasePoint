@@ -5,6 +5,7 @@ namespace CheckBasePoint
     public static class PathsStatic
     {
         public static string verRevit;
+        public static string uName;
         public static string directoryPath =            Path.Combine("X:\\01_Скрипты\\04_BIM\\00_Запуск\\CheckBasePoint\\");
         public static string errLog =                   Path.Combine(directoryPath);
 

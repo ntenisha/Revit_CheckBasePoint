@@ -30,7 +30,7 @@ namespace CheckBasePoint
  
             Paths path01 = new Paths(uiApp.Application.VersionNumber.ToString());
             PathsStatic.verRevit = uiApp.Application.VersionNumber.ToString();
-
+            PathsStatic.uName = Environment.UserName;
             Loger01.Write("Запущен CheckBpWorkingFiles");
             try
             {
@@ -76,7 +76,8 @@ namespace CheckBasePoint
                             string temp02 = ParseValueInQuotesOrTrim(parts[1]);
                             Loger01.Write("value 1\t" + temp01.ToString() + "\tvalue 2\t" + temp02.ToString());
                             List<object> row = new List<object> { temp01, temp02 };
-                            result.Add(row);
+                            if (File.Exists(temp01)){result.Add(row);}
+                            else{ Loger01.Write($"Файл не найден {temp01}"); }
                         }
                         else
                         {
@@ -322,7 +323,7 @@ namespace CheckBasePoint
                 }
                 catch (Exception ex)
                 {
-                    Loger01.Write($"Error processing file {resultItem}: {ex.Message}");
+                    Loger01.Write($"CheckBpFiles Working Error processing file {resultItem}: {ex.Message}");
                 }
             }
 

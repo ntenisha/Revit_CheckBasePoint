@@ -21,6 +21,7 @@ namespace CheckBasePoint
 
             Paths path01 = new Paths(uiApp.Application.VersionNumber.ToString());
             PathsStatic.verRevit = uiApp.Application.VersionNumber.ToString();
+            PathsStatic.uName = Environment.UserName;
             Loger01.Write("запущен GetBpFromCoordFiles");
             //исправить
             // bpFilePathUser = Paths.DirectoryPath + "Check_Bp_coord_files" + Paths.verRevit + ".txt";
@@ -132,7 +133,7 @@ namespace CheckBasePoint
                 }
                 catch (Exception ex)
                 {
-                    Loger01.Write($"Error processing file {modelPath}: {ex.Message}");
+                    Loger01.Write($"CheckBpFiles Coord Error processing file {modelPath}: {ex.Message}");
                     Loger01.LogEx(ex);
                 }
                 nextNumber++;

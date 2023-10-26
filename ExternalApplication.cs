@@ -25,6 +25,7 @@ namespace CheckBasePoint
 
             Paths path01 = new Paths(application.ControlledApplication.VersionNumber.ToString());
             PathsStatic.verRevit = application.ControlledApplication.VersionNumber.ToString();
+            PathsStatic.uName = Environment.UserName;
             Loger01.Write("Application startup " + Assembly.GetExecutingAssembly().GetName().Version.ToString());
 
             application.ControlledApplication.ApplicationInitialized += new EventHandler<ApplicationInitializedEventArgs>(Initialized);
