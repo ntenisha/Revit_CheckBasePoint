@@ -16,8 +16,8 @@ namespace CheckBasePoint
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             UIApplication uiApp = commandData.Application;
-            UIDocument uiDoc = uiApp.ActiveUIDocument;
-            Document doc = uiDoc.Document;
+            //UIDocument uiDoc = uiApp.ActiveUIDocument;
+            //Document doc = uiDoc.Document;
 
             Paths path01 = new Paths(uiApp.Application.VersionNumber.ToString());
             PathsStatic.verRevit = uiApp.Application.VersionNumber.ToString();

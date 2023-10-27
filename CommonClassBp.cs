@@ -147,16 +147,16 @@ namespace CheckBasePoint
                 Parameter elevationParam = oProjectBasePoint.get_Parameter(BuiltInParameter.BASEPOINT_ELEVATION_PARAM);
                 Parameter angleToNorthParam = oProjectBasePoint.get_Parameter(BuiltInParameter.BASEPOINT_ANGLETON_PARAM);
 
-                double x = eastWestParam.AsDouble();
-                double y = northSouthParam.AsDouble();
-                double z = elevationParam.AsDouble();
-                double r = angleToNorthParam.AsDouble();
+                //double x = eastWestParam.AsDouble();
+                //double y = northSouthParam.AsDouble();
+                //double z = elevationParam.AsDouble();
+                //double r = angleToNorthParam.AsDouble();
 
                 // округление до 5 знаков
-                //double x = Math.Round(eastWestParam.AsDouble(), 5);
-                //double y = Math.Round(northSouthParam.AsDouble(), 5);
-                //double z = Math.Round(elevationParam.AsDouble(), 5);
-                //double r = Math.Round(angleToNorthParam.AsDouble(), 5);
+                double x = Math.Round(eastWestParam.AsDouble(), 5);
+                double y = Math.Round(northSouthParam.AsDouble(), 5);
+                double z = Math.Round(elevationParam.AsDouble(), 5);
+                double r = Math.Round(angleToNorthParam.AsDouble(), 5);
 
                 result.Add(x);
                 result.Add(y);

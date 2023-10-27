@@ -310,12 +310,18 @@ namespace CheckBasePoint
                     if (!coordTemp.SequenceEqual(resultItem.Skip(1).Take(4)))
                     {
                         List<object> templist = new List<object> { 
-                            modelPath, 
-                            Convert.ToDouble(resultItem[1]) - Convert.ToDouble(coordTemp[0]), 
-                            Convert.ToDouble(resultItem[2]) - Convert.ToDouble(coordTemp[1]), 
-                            Convert.ToDouble(resultItem[3]) - Convert.ToDouble(coordTemp[2]), 
-                            Convert.ToDouble(resultItem[4]) - Convert.ToDouble(coordTemp[3]) 
-                        };
+                            modelPath,
+                            Math.Round(Convert.ToDouble(resultItem[1]) - Convert.ToDouble(coordTemp[0]),5),
+                            Math.Round(Convert.ToDouble(resultItem[2]) - Convert.ToDouble(coordTemp[1]),5),
+                            Math.Round(Convert.ToDouble(resultItem[3]) - Convert.ToDouble(coordTemp[2]),5),
+                            Math.Round(Convert.ToDouble(resultItem[4]) - Convert.ToDouble(coordTemp[3]),5)
+
+                            //без округления
+                            //Convert.ToDouble(resultItem[1]) - Convert.ToDouble(coordTemp[0]), 
+                            //Convert.ToDouble(resultItem[2]) - Convert.ToDouble(coordTemp[1]), 
+                            //Convert.ToDouble(resultItem[3]) - Convert.ToDouble(coordTemp[2]), 
+                            //Convert.ToDouble(resultItem[4]) - Convert.ToDouble(coordTemp[3]) 
+                    };
                         res02.Add(templist);
                     }
 
