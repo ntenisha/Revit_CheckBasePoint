@@ -52,5 +52,29 @@ namespace CheckBasePoint
                 // Перехватываем все и ничего не делаем
             }
         }
+
+        public static void FileNotFound(string Text)
+        {
+            try
+            {
+                // Путь .\\Log
+                //*string pathToLog = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Log");
+
+                string pathToLog = PathsStatic.errLog;
+                if (!Directory.Exists(pathToLog))
+                    Directory.CreateDirectory(pathToLog); // Создаем директорию, если нужно
+                string filename = Path.Combine(pathToLog, "Файл_не_найден.txt");
+                //string fullText = string.Format("[{0:dd.MM.yyy HH:mm:ss.fff}] {1}\r\n", DateTime.Now, Text);
+                string fullText = string.Format("[{0:dd.MM.yyy HH:mm:ss.fff}] {1} {2} {3}\r\n", DateTime.Now, PathsStatic.verRevit, PathsStatic.uName, Text);
+                lock (sync)
+                {
+                    File.AppendAllText(filename, fullText, Encoding.GetEncoding("Windows-1251"));
+                }
+            }
+            catch
+            {
+                // Перехватываем все и ничего не делаем
+            }
+        }
     }
 }

@@ -23,6 +23,10 @@ namespace CheckBasePoint
             PathsStatic.verRevit = uiApp.Application.VersionNumber.ToString();
             PathsStatic.uName = Environment.UserName;
             Loger01.Write("запущен GetBpFromCoordFiles");
+            if (File.Exists(Path.Combine(PathsStatic.errLog, "Файл_не_найден.txt")))
+            {
+                File.Delete(Path.Combine(PathsStatic.errLog, "Файл_не_найден.txt"));
+            }
             //исправить
             // bpFilePathUser = Paths.DirectoryPath + "Check_Bp_coord_files" + Paths.verRevit + ".txt";
             //string bpFilePath = Paths.DirectoryPath + "Json\\Check_Bp_coord_files" + Paths.verRevit + ".Json";
@@ -64,7 +68,8 @@ namespace CheckBasePoint
                         }
                         else
                         {
-                            Loger01.Write($"Файла нет: {filePath01}");
+                            Loger01.Write($"Файл не найден: {filePath01}");
+                            Loger01.FileNotFound($"Файл не найден: {filePath01}");
                         }
                     }
                 }

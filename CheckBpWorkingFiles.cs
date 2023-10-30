@@ -32,6 +32,9 @@ namespace CheckBasePoint
             PathsStatic.verRevit = uiApp.Application.VersionNumber.ToString();
             PathsStatic.uName = Environment.UserName;
             Loger01.Write("Запущен CheckBpWorkingFiles");
+            if (File.Exists(Path.Combine(PathsStatic.errLog, "Файл_не_найден.txt"))){
+                File.Delete(Path.Combine(PathsStatic.errLog, "Файл_не_найден.txt"));}
+
             try
             {
                 uiApp.DialogBoxShowing += CommonClassBp.Application_DialogBoxShowing;
@@ -77,7 +80,10 @@ namespace CheckBasePoint
                             Loger01.Write("value 1\t" + temp01.ToString() + "\tvalue 2\t" + temp02.ToString());
                             List<object> row = new List<object> { temp01, temp02 };
                             if (File.Exists(temp01)){result.Add(row);}
-                            else{ Loger01.Write($"Файл не найден {temp01}"); }
+                            else{
+                                Loger01.FileNotFound($"Файл не найден: {temp01}");
+                                Loger01.Write($"Файл не найден {temp01}"); 
+                            }
                         }
                         else
                         {
