@@ -5,11 +5,12 @@ namespace CheckBasePoint
 {
     internal class StartUpCleanEvent : IExternalEventHandler
     {
+
         public void Execute(UIApplication uiApp)
         {
             Loger01.Write("StartUpCleanEvent start");
 
-            if (DateTime.Now.Hour > 8) {
+            if (DateTime.Now.Hour > 8 ||  DateTime.Now.Hour < 4) {
                 Loger01.Write("DateTime.Now.Hour" + DateTime.Now.Hour.ToString());
                 return;
             }

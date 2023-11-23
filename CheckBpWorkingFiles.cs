@@ -32,8 +32,9 @@ namespace CheckBasePoint
             PathsStatic.verRevit = uiApp.Application.VersionNumber.ToString();
             PathsStatic.uName = Environment.UserName;
             Loger01.Write("Запущен CheckBpWorkingFiles");
-            if (File.Exists(Path.Combine(PathsStatic.errLog, "Файл_не_найден.txt"))){
-                File.Delete(Path.Combine(PathsStatic.errLog, "Файл_не_найден.txt"));}
+            if (File.Exists(Path.Combine(PathsStatic.errLog, "Файл_не_найден" + PathsStatic.verRevit + ".txt"))){
+                File.Delete(Path.Combine(PathsStatic.errLog, "Файл_не_найден" + PathsStatic.verRevit + ".txt"));
+            }
 
             try
             {
