@@ -9,11 +9,27 @@ namespace CheckBasePoint
         public void Execute(UIApplication uiApp)
         {
             Loger01.Write("StartUpCleanEvent start");
+            bool flag01 = false;
 
-            if (DateTime.Now.Hour > 8 ||  DateTime.Now.Hour < 4) {
-                Loger01.Write("DateTime.Now.Hour" + DateTime.Now.Hour.ToString());
-                return;
+            string[] envArgs = Environment.GetCommandLineArgs();
+
+            foreach (string arg in envArgs)
+            {
+                if (arg == "/CheckBasePoint")
+                {
+                    flag01 = true;
+                    break;
+                }
+
             }
+            if (flag01 == false)
+                return;
+
+            //if (DateTime.Now.Hour > 8 || DateTime.Now.Hour < 4)
+            //{
+            //    Loger01.Write("DateTime.Now.Hour" + DateTime.Now.Hour.ToString());
+            //    return;
+            //}
             Initialized_TimerDlg(uiApp);
         }
 
