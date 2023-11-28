@@ -1,5 +1,7 @@
 ﻿using Autodesk.Revit.UI;
 using System;
+using System.IO;
+using System.Threading;
 
 namespace CheckBasePoint
 {
@@ -8,42 +10,45 @@ namespace CheckBasePoint
 
         public void Execute(UIApplication uiApp)
         {
+            PathsStatic.verRevit = uiApp.Application.VersionNumber.ToString();
+            Thread.Sleep(10000);
             Loger01.Write("StartUpCleanEvent start");
             bool flag01 = false;
-
             string[] envArgs = Environment.GetCommandLineArgs();
-
             foreach (string arg in envArgs)
             {
-                if (arg == "/CheckBasePoint")
+                Loger01.Write(arg);
+                if (arg.Contains("CheckBasePoint"))
                 {
                     flag01 = true;
                     break;
                 }
-
             }
             if (flag01 == false)
+            {
                 return;
-
+            }
             //if (DateTime.Now.Hour > 8 || DateTime.Now.Hour < 4)
             //{
             //    Loger01.Write("DateTime.Now.Hour" + DateTime.Now.Hour.ToString());
             //    return;
             //}
-            Initialized_TimerDlg(uiApp);
+            //Initialized_TimerDlg(uiApp);
+            ExecuteCheckBpWorkingFiles(uiApp);
         }
 
-        protected void Initialized_TimerDlg(UIApplication uiApp)
-        {
+        //protected void Initialized_TimerDlg(UIApplication uiApp)
+        //{
 
-            Loger01.Write("TimerDlg: Export will start in seconds 60");
-            if (new TimerDlg.TimerDlg("CheckBasePoint", "Check will start in seconds", 60).ShowDialog() == true)
-            {
-                Loger01.Write("TimeDlg: Ok");
-                ExecuteCheckBpWorkingFiles(uiApp);
-            }
-            else Loger01.Write("TimeDlg: Cancel");
-        }
+            //Loger01.Write("TimerDlg: Export will start in seconds 60");
+            //if (new TimerDlg.TimerDlg("CheckBasePoint", "Check will start in seconds", 60).ShowDialog() == true)
+            //{
+            //    Loger01.Write("TimeDlg: Ok");
+            //    ExecuteCheckBpWorkingFiles(uiApp);
+            //}
+            //else Loger01.Write("TimeDlg: Cancel");
+            //ExecuteCheckBpWorkingFiles(uiApp);
+        //}
 
         private void ExecuteCheckBpWorkingFiles(UIApplication uiApp)
         {
