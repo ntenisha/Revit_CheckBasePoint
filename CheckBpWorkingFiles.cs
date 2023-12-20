@@ -314,7 +314,9 @@ namespace CheckBasePoint
 
                     List<object> coordTemp = CommonClassBp.GetBp(cdoc);
 
-                    if (!coordTemp.SequenceEqual(resultItem.Skip(1).Take(4)))
+
+                    if (!coordTemp.Take(3).SequenceEqual(resultItem.Skip(1).Take(3)))
+                    //if (!coordTemp.SequenceEqual(resultItem.Skip(1).Take(4)))
                     {
                         List<object> templist = new List<object> { 
                             modelPath,

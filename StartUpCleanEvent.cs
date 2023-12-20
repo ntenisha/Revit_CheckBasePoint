@@ -1,6 +1,6 @@
 ﻿using Autodesk.Revit.UI;
 using System;
-using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace CheckBasePoint
@@ -63,22 +63,38 @@ namespace CheckBasePoint
 
             try { CheckBpWorkingFiles.RunWF(uiApp); }
             catch (Exception e) { Loger01.Write("StartUp Exception:" + e); }
+            //ClosingRevit();
+            Thread.Sleep(20000);
+            PressCloseWindow(uiApp.MainWindowHandle);
 
-            ClosingRevit();
         }
 
-        private static void ClosingRevit()
-        {
-            Loger01.Write("TimerDlg: Closing Revit");
-            if (new TimerDlg.TimerDlg("CheckBasePoint", "Closing Revit", 60).ShowDialog() == true)
-            {
-                System.Diagnostics.Process.GetCurrentProcess().CloseMainWindow();
-            }
-        }
+        //private static void ClosingRevit()
+        //{
+        //    Loger01.Write("TimerDlg: Closing Revit");
+        //    if (new TimerDlg.TimerDlg("CheckBasePoint", "Closing Revit", 60).ShowDialog() == true)
+        //    {
+        //        System.Diagnostics.Process.GetCurrentProcess().CloseMainWindow();
+        //    }
+        //}
+
 
         public string GetName()
         {
             return nameof(StartUpCleanEvent);
         }
+
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool PostMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
+
+        const int WM_CLOSE = 0x10;
+
+        public void PressCloseWindow(IntPtr revitWindowHandle)
+        {
+            PostMessage(revitWindowHandle, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+            //Loger01.Write("Start PressCloseWindow  ");
+        }
+
     }
 }

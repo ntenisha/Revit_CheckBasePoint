@@ -86,7 +86,10 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if exist "$(AppData)\Autodesk\REVIT\Addins\2022" copy "$(ProjectDir)CheckBasePoint.addin" "$(AppData)\Autodesk\REVIT\Addins\2022"
+if exist "$(AppData)\Autodesk\REVIT\Addins\2019" copy "$(ProjectDir)CheckBasePoint.addin" "$(AppData)\Autodesk\REVIT\Addins\2019"
+
 if exist "$(AppData)\Autodesk\REVIT\Addins\2022" copy "$(ProjectDir)$(OutputPath)CheckBasePoint.dll" "$(AppData)\Autodesk\REVIT\Addins\2022"
+if exist "$(AppData)\Autodesk\REVIT\Addins\2019" copy "$(ProjectDir)$(OutputPath)CheckBasePoint.dll" "$(AppData)\Autodesk\REVIT\Addins\2019" 
 
 if exist "X:\01_Скрипты\04_BIM\00_Запуск\CheckBasePoint\Dll" copy "$(ProjectDir)CheckBasePoint.addin" "X:\01_Скрипты\04_BIM\00_Запуск\CheckBasePoint\Dll"
 if exist "X:\01_Скрипты\04_BIM\00_Запуск\CheckBasePoint\Dll" copy "$(ProjectDir)$(OutputPath)CheckBasePoint.dll" "X:\01_Скрипты\04_BIM\00_Запуск\CheckBasePoint\Dll"</PostBuildEvent>

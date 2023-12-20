@@ -25,19 +25,19 @@ namespace CheckBasePoint
                 File.Create(outputPath).Close();
             }
 
-            if (results == null || results.Count == 0)
-            {
-                try
-                {
-                    File.WriteAllText(outputPath, "Все Ок");
-                    Loger01.Write("Файл записан: " + outputPath);
-                    return;
-                }
-                catch (Exception ex)
-                {
-                    Loger01.Write("Произошла ошибка при записи в файл: " + ex.Message);
-                }
-            }
+            //if (results == null || results.Count == 0)
+            //{
+            //    try
+            //    {
+            //        File.WriteAllText(outputPath, "Все Ок");
+            //        Loger01.Write("Файл записан: " + outputPath);
+            //        return;
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Loger01.Write("Произошла ошибка при записи в файл: " + ex.Message);
+            //    }
+            //}
 
             try
             {
