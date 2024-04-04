@@ -32,8 +32,8 @@ namespace CheckBasePoint
 
             RibbonPanel ribbonPanel = application.CreateRibbonPanel("CheckBasePoint");
 
-            PushButtonData buttonDataExport = new PushButtonData("Coord",   "Get Base point",        PATH_LOCACTION, "CheckBasePoint.GetBpFromCoordFiles");
-            PushButtonData buttonDataConfig = new PushButtonData("Working", "Check working files",   PATH_LOCACTION, "CheckBasePoint.CheckBpWorkingFiles");
+            PushButtonData buttonDataExport = new PushButtonData("Coord", "Get Base point", PATH_LOCACTION, "CheckBasePoint.GetBpFromCoordFiles");
+            PushButtonData buttonDataConfig = new PushButtonData("Working", "Check working files", PATH_LOCACTION, "CheckBasePoint.CheckBpWorkingFiles");
 
             buttonDataExport.AvailabilityClassName = "CheckBasePoint.AvailabilityClass";
             buttonDataConfig.AvailabilityClassName = "CheckBasePoint.AvailabilityClass";

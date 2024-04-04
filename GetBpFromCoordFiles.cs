@@ -53,7 +53,7 @@ namespace CheckBasePoint
                 File.Create(filePath).Close();
                 return allFilePaths;
             }
-            
+
             try
             {
                 using (StreamReader reader = new StreamReader(filePath))

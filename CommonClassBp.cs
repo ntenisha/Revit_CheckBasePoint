@@ -15,7 +15,7 @@ namespace CheckBasePoint
 {
     [Transaction(TransactionMode.Manual)]
 
-    public class CommonClassBp 
+    public class CommonClassBp
     {
 
         public static void WriteResultsToJsonFileWorking(string outputPath, List<List<object>> results)
@@ -52,7 +52,8 @@ namespace CheckBasePoint
                     { "DeltaEastWest", result[1] },
                     { "DeltaNorthSouth", result[2] },
                     { "DeltaElevation", result[3] },
-                    { "DeltaAngleToNorth", result[4] }
+                    { "DeltaAngleToNorth", result[4] },
+                    { "LastChangedBy", result[5] }
                 };
                     resultObjects.Add(resultDict);
                 }
@@ -298,7 +299,7 @@ namespace CheckBasePoint
 
                             Loger01.Write($"Необработанное окно -  {args.DialogId}. Текст окна - '{args.Message}', Cancellable: {args.Cancellable}. Использую код 1001");
                             args.OverrideResult(1001);
-                        } 
+                        }
 
 
                         break;

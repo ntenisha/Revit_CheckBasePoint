@@ -40,14 +40,14 @@ namespace CheckBasePoint
         //protected void Initialized_TimerDlg(UIApplication uiApp)
         //{
 
-            //Loger01.Write("TimerDlg: Export will start in seconds 60");
-            //if (new TimerDlg.TimerDlg("CheckBasePoint", "Check will start in seconds", 60).ShowDialog() == true)
-            //{
-            //    Loger01.Write("TimeDlg: Ok");
-            //    ExecuteCheckBpWorkingFiles(uiApp);
-            //}
-            //else Loger01.Write("TimeDlg: Cancel");
-            //ExecuteCheckBpWorkingFiles(uiApp);
+        //Loger01.Write("TimerDlg: Export will start in seconds 60");
+        //if (new TimerDlg.TimerDlg("CheckBasePoint", "Check will start in seconds", 60).ShowDialog() == true)
+        //{
+        //    Loger01.Write("TimeDlg: Ok");
+        //    ExecuteCheckBpWorkingFiles(uiApp);
+        //}
+        //else Loger01.Write("TimeDlg: Cancel");
+        //ExecuteCheckBpWorkingFiles(uiApp);
         //}
 
         private void ExecuteCheckBpWorkingFiles(UIApplication uiApp)
@@ -56,7 +56,7 @@ namespace CheckBasePoint
             {
                 throw new Exception("uiApp is null!!!");
             }
-            
+
             // удалить
             Loger01.Write("Execute CheckBpWorkingFiles :" + uiApp.ToString());
 

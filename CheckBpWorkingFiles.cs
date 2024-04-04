@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
+using System.Windows.Controls;
 
 namespace CheckBasePoint
 {
@@ -27,12 +28,13 @@ namespace CheckBasePoint
         public static void RunWF(UIApplication uiApp)
         {
             string _appversion = uiApp.Application.VersionNumber;
- 
+
             Paths path01 = new Paths(uiApp.Application.VersionNumber.ToString());
             PathsStatic.verRevit = uiApp.Application.VersionNumber.ToString();
             PathsStatic.uName = Environment.UserName;
             Loger01.Write("Запущен CheckBpWorkingFiles");
-            if (File.Exists(Path.Combine(PathsStatic.errLog, "Файл_не_найден" + PathsStatic.verRevit + ".txt"))){
+            if (File.Exists(Path.Combine(PathsStatic.errLog, "Файл_не_найден" + PathsStatic.verRevit + ".txt")))
+            {
                 File.Delete(Path.Combine(PathsStatic.errLog, "Файл_не_найден" + PathsStatic.verRevit + ".txt"));
             }
 
@@ -80,10 +82,11 @@ namespace CheckBasePoint
                             string temp02 = ParseValueInQuotesOrTrim(parts[1]);
                             Loger01.Write("value 1\t" + temp01.ToString() + "\tvalue 2\t" + temp02.ToString());
                             List<object> row = new List<object> { temp01, temp02 };
-                            if (File.Exists(temp01)){result.Add(row);}
-                            else{
+                            if (File.Exists(temp01)) { result.Add(row); }
+                            else
+                            {
                                 Loger01.FileNotFound($"Файл не найден: {temp01}");
-                                Loger01.Write($"Файл не найден {temp01}"); 
+                                Loger01.Write($"Файл не найден {temp01}");
                             }
                         }
                         else
@@ -118,8 +121,8 @@ namespace CheckBasePoint
                 }
             }
 
-            string trimmedText = inputText.Trim(); 
-            trimmedText = trimmedText.Trim(','); 
+            string trimmedText = inputText.Trim();
+            trimmedText = trimmedText.Trim(',');
             string normalizedPath02 = Path.GetFullPath(trimmedText);
             return normalizedPath02;
         }
@@ -230,7 +233,7 @@ namespace CheckBasePoint
                         Loger01.Write("Файл не существует." + item.WorkingFile);
                     }
 
-                    
+
                 }
 
                 return resultsFfromJson;
@@ -272,10 +275,10 @@ namespace CheckBasePoint
                         List<object> combinedItem = new List<object>
                         {
                             wfItem[0],
-                            bpItem[1], 
+                            bpItem[1],
                             bpItem[2],
                             bpItem[3],
-                            bpItem[4]  
+                            bpItem[4]
                         };
 
                         combinedResults.Add(combinedItem);
@@ -314,17 +317,24 @@ namespace CheckBasePoint
 
                     List<object> coordTemp = CommonClassBp.GetBp(cdoc);
 
-
+                    FilteredElementCollector collector = new FilteredElementCollector(cdoc).OfCategory(BuiltInCategory.OST_ProjectBasePoint);
+                    string list_last_changed = "";
+                    foreach (Element bp in collector)
+                    {
+                        WorksharingTooltipInfo info = WorksharingUtils.GetWorksharingTooltipInfo(cdoc, bp.Id);
+                        list_last_changed = list_last_changed + info.LastChangedBy + " ";
+                    }
+                    list_last_changed = list_last_changed.Trim();
                     if (!coordTemp.Take(3).SequenceEqual(resultItem.Skip(1).Take(3)))
                     //if (!coordTemp.SequenceEqual(resultItem.Skip(1).Take(4)))
                     {
-                        List<object> templist = new List<object> { 
+                        List<object> templist = new List<object> {
                             modelPath,
                             Math.Round(Convert.ToDouble(resultItem[1]) - Convert.ToDouble(coordTemp[0]),5),
                             Math.Round(Convert.ToDouble(resultItem[2]) - Convert.ToDouble(coordTemp[1]),5),
                             Math.Round(Convert.ToDouble(resultItem[3]) - Convert.ToDouble(coordTemp[2]),5),
-                            Math.Round(Convert.ToDouble(resultItem[4]) - Convert.ToDouble(coordTemp[3]),5)
-
+                            Math.Round(Convert.ToDouble(resultItem[4]) - Convert.ToDouble(coordTemp[3]),5),
+                            list_last_changed
                             //без округления
                             //Convert.ToDouble(resultItem[1]) - Convert.ToDouble(coordTemp[0]), 
                             //Convert.ToDouble(resultItem[2]) - Convert.ToDouble(coordTemp[1]), 
