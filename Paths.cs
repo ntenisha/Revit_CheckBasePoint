@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using static System.Net.WebRequestMethods;
 
 namespace CheckBasePoint
 {
@@ -7,7 +8,7 @@ namespace CheckBasePoint
         public static string verRevit;
         public static string uName;
         public static string directoryPath = Path.Combine("X:\\01_Скрипты\\04_BIM\\00_Запуск\\CheckBasePoint\\");
-        public static string errLog = Path.Combine(directoryPath);
+        public static string errLog = Path.Combine(directoryPath, "Logs\\");
 
     }
 
@@ -20,7 +21,7 @@ namespace CheckBasePoint
         public string WorkingFilePathUser { get; private set; }
         public string LogFile { get; private set; }
         public string ErrLog { get; private set; }
-
+        public string FileOkTxt { get; private set; }
         public Paths(string verRevit)
         {
             _verRevit = verRevit;
@@ -29,11 +30,11 @@ namespace CheckBasePoint
 
             BpFilePath = Path.Combine(directoryPath, "Json\\Check_Bp_coord_files" + verRevit + ".Json");
             WorkingFilePath = Path.Combine(directoryPath, "Json\\Check_Bp_working_files" + verRevit + ".Json");
-            BpFilePathUser = Path.Combine(directoryPath, "Check_Bp_coord_files" + verRevit + ".txt");
-            WorkingFilePathUser = Path.Combine(directoryPath, "Check_Bp_working_files" + verRevit + ".txt");
+            BpFilePathUser = Path.Combine(directoryPath, "FilePaths\\Check_Bp_coord_files" + verRevit + ".txt");
+            WorkingFilePathUser = Path.Combine(directoryPath, "FilePaths\\Check_Bp_working_files" + verRevit + ".txt");
             LogFile = Path.Combine(directoryPath, "Check_Bp_результат" + verRevit + ".Json");
             ErrLog = Path.Combine(directoryPath);
-
+            FileOkTxt = Path.Combine(directoryPath, "Logs\\FileOk" + verRevit + ".txt");
 
         }
 

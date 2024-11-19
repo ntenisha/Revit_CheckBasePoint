@@ -26,7 +26,8 @@ namespace CheckBasePoint
             Paths path01 = new Paths(application.ControlledApplication.VersionNumber.ToString());
             PathsStatic.verRevit = application.ControlledApplication.VersionNumber.ToString();
             PathsStatic.uName = Environment.UserName;
-            Loger01.Write("Application startup " + Assembly.GetExecutingAssembly().GetName().Version.ToString());
+            //Loger01.Write("Application startup " + Assembly.GetExecutingAssembly().GetName().Version.ToString());
+
 
             application.ControlledApplication.ApplicationInitialized += new EventHandler<ApplicationInitializedEventArgs>(Initialized);
 
@@ -49,7 +50,7 @@ namespace CheckBasePoint
         public Result OnShutdown(UIControlledApplication application)
         {
             application.ControlledApplication.ApplicationInitialized -= Initialized;
-            Loger01.Write("Application shutdown\n");
+            //Loger01.Write("Application shutdown\n");
             return Result.Succeeded;
         }
     }
