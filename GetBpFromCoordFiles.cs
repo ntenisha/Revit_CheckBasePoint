@@ -22,7 +22,7 @@ namespace CheckBasePoint
             Paths path01 = new Paths(uiApp.Application.VersionNumber.ToString());
             PathsStatic.verRevit = uiApp.Application.VersionNumber.ToString();
             PathsStatic.uName = Environment.UserName;
-            Loger01.Write("запущен GetBpFromCoordFiles");
+
             if (File.Exists(Path.Combine(PathsStatic.errLog, "Файл_не_найден" + PathsStatic.verRevit + ".txt")))
             {
                 File.Delete(Path.Combine(PathsStatic.errLog, "Файл_не_найден" + PathsStatic.verRevit + ".txt"));
@@ -40,8 +40,8 @@ namespace CheckBasePoint
 
             CommonClassBp.WriteResultsToJsonFile(path01.BpFilePath, results);
 
-            CommonClassBp.DeleteFilesAndSubfolders(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "temp_dir"));
-            Loger01.Write("Завершен GetBpFromCoordFiles\n");
+            CommonClassBp.DeleteFilesAndSubfolders(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "CheckBasePoint_temp_dir"));
+
             return Result.Succeeded;
         }
 

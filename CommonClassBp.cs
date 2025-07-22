@@ -9,6 +9,7 @@ using Autodesk.Revit.UI.Events;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.Remoting.Contexts;
 
 
 namespace CheckBasePoint
@@ -24,20 +25,6 @@ namespace CheckBasePoint
             {
                 File.Create(outputPath).Close();
             }
-
-            //if (results == null || results.Count == 0)
-            //{
-            //    try
-            //    {
-            //        File.WriteAllText(outputPath, "Все Ок");
-            //        Loger01.Write("Файл записан: " + outputPath);
-            //        return;
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Loger01.Write("Произошла ошибка при записи в файл: " + ex.Message);
-            //    }
-            //}
 
             try
             {
@@ -67,13 +54,78 @@ namespace CheckBasePoint
 
                 File.WriteAllText(outputPath, jsonText);
 
-                Loger01.Write("Результаты успешно записаны в файл: " + outputPath);
             }
             catch (Exception ex)
             {
                 Loger01.Write("Произошла ошибка при записи в файл: " + ex.Message);
             }
         }
+
+        public static void AddResultsFileNotFoundToJsonFile(string outputPath, List<string> results)
+        {
+            List<Dictionary<string, object>> resultObjectsFileNotFound = new List<Dictionary<string, object>>();
+            List<Dictionary<string, object>> resultObjectsItems = new List<Dictionary<string, object>>();
+
+            if (File.Exists(outputPath))
+            {
+                try
+                {
+                    // Чтение существующего содержимого файла
+                    string existingJsonText = File.ReadAllText(outputPath);
+                    var existingJsonResult = JsonConvert.DeserializeObject<Dictionary<string, List<Dictionary<string, object>>>>(existingJsonText);
+
+                    if (existingJsonResult != null)
+                    {
+                        if (existingJsonResult.ContainsKey("Items"))
+                        {
+                            resultObjectsItems = existingJsonResult["Items"];
+                        }
+
+                        if (existingJsonResult.ContainsKey("FileNotFound"))
+                        {
+                            resultObjectsFileNotFound = existingJsonResult["FileNotFound"];
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Loger01.Write("Произошла ошибка при чтении существующего файла: " + ex.Message);
+                }
+            }
+
+            try
+            {
+                // Добавление новых данных к существующим
+                foreach (string result in results)
+                {
+                    Dictionary<string, object> resultDict = new Dictionary<string, object>
+                        {
+                            { "PathToModel", result },
+                            { "Data", DateTime.Now.ToString("yyyy.MM.dd") }
+                        };
+                    resultObjectsFileNotFound.Add(resultDict);
+                }
+
+                Dictionary<string, List<Dictionary<string, object>>> jsonResult = new Dictionary<string, List<Dictionary<string, object>>>
+                    {
+                        { "Items", resultObjectsItems },
+                        { "FileNotFound", resultObjectsFileNotFound }
+                    };
+
+
+                string jsonText = JsonConvert.SerializeObject(jsonResult, Formatting.Indented);
+
+                // Запись обратно в файл
+                File.WriteAllText(outputPath, jsonText);
+            }
+            catch (Exception ex)
+            {
+                Loger01.Write("Произошла ошибка при записи в файл: " + ex.Message);
+            }
+        }
+
+
+
 
         public static void WriteResultsToJsonFile(string outputPath, List<List<object>> results)
         {
@@ -108,7 +160,6 @@ namespace CheckBasePoint
 
                 File.WriteAllText(outputPath, jsonText);
 
-                Loger01.Write("Результаты успешно записаны в файл: " + outputPath);
             }
             catch (Exception ex)
             {
@@ -231,7 +282,7 @@ namespace CheckBasePoint
 
             if (string.IsNullOrEmpty(tempDir))
             {
-                tempDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "temp_dir");
+                tempDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "CheckBasePoint_temp_dir");
             }
 
             string fileNameWithExtension = Path.GetFileName(modelPath);
@@ -245,8 +296,6 @@ namespace CheckBasePoint
             string tempFilePath = Path.Combine(tempDir, fileNameWithExtension);
 
             File.Copy(modelPath, tempFilePath, true);
-
-            Loger01.Write($"Скопирован файл во временную папку - {tempFilePath}, папка - {tempDir}");
 
             ModelPath modelPathObj = ModelPathUtils.ConvertUserVisiblePathToModelPath(tempFilePath);
             OpenOptions openOptions = new OpenOptions
@@ -262,8 +311,6 @@ namespace CheckBasePoint
 
             Document docBackground = app.OpenDocumentFile(modelPathObj, openOptions);
 
-            Loger01.Write($"Документ отсоединен и открыт - {docBackground.Title}");
-
             return new Tuple<Document, string>(docBackground, tempFilePath);
         }
 
@@ -275,7 +322,7 @@ namespace CheckBasePoint
                 switch (e)
                 {
                     case TaskDialogShowingEventArgs args:
-                        Loger01.Write($"Обработка окна {args.DialogId}...");
+                        //Loger01.Write($"Обработка окна {args.DialogId}...");
 
                         if (args.DialogId == "TaskDialog_Unresolved_References")
                         {
@@ -305,7 +352,7 @@ namespace CheckBasePoint
                         break;
 
                     case DialogBoxShowingEventArgs args2:
-                        Loger01.Write($"Обработка окна {args2.DialogId}...");
+                        //Loger01.Write($"Обработка окна {args2.DialogId}...");
 
                         if (args2.DialogId == "Dialog_Revit_DocWarnDialog")
                         {
@@ -424,7 +471,7 @@ namespace CheckBasePoint
                     // Удаляем саму папку
                     Directory.Delete(folderPath);
 
-                    Loger01.Write("Все файлы и подпапки в указанной папке были удалены.");
+                    //Loger01.Write("Все файлы и подпапки в указанной папке были удалены.");
                 }
                 else
                 {
